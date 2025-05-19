@@ -10,7 +10,7 @@ for i in range(1, 11):
         for crypto in data:
             tickers = tickers + "'" + crypto['symbol'].upper() + "'" + ','
 file_loader = FileSystemLoader('./')
-env = Environment(loader=file_loader)
+env = Environment(loader=file_loader, autoescape=True)
 template = env.get_template('data.jinja2')
 output = template.render(tickers=tickers)
 with open("data.py", "w") as fh:
