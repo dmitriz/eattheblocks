@@ -11,6 +11,7 @@ import demjson
 from bs4 import BeautifulSoup
 
 from imgurapi import get_gif
+from security import safe_requests
 
 
 def querycmc():
@@ -20,12 +21,12 @@ def querycmc():
 def load_historical_data():
     months = list(month_abbr)
     source = 'https://coinmarketcap.com/currencies/ethereum/historical-data/?start=20150808&end=1', 'https://etherscan.io/chart/tx?output=csv'
-    soup = BeautifulSoup(requests.get(source[0]).text, 'html.parser')
+    soup = BeautifulSoup(safe_requests.get(source[0]).text, 'html.parser')
 
     cmc = [[float(d.replace(',', '')) if d[0].isdecimal() else d for d in [tag.string for tag in el.findAll('td')]]
            for el in soup.table.tbody.findAll('tr')]
     transactions = [[int(x) if '/' not in x else x for x in [i.strip('"') for i in line.split(',')]]
-                    for line in requests.get(source[1]).text.splitlines()[1:]][::-1]
+                    for line in safe_requests.get(source[1]).text.splitlines()[1:]][::-1]
 
     m, d, y = map(int, transactions[0][0].split('/'))
     most_recent_etherscan = date(y, m, d)
